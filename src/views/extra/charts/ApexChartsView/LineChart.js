@@ -7,7 +7,7 @@ import {
   useTheme
 } from '@material-ui/core';
 
-function LineChart() {
+function LineChart({device,dados}) {
   const theme = useTheme();
   const chart = {
     options: {
@@ -70,7 +70,7 @@ function LineChart() {
           show: true,
           color: theme.palette.divider
         },
-        categories: ['01 Jan', '02 Jan', '03 Jan', '04 Jan', '05 Jan', '06 Jan', '07 Jan', '08 Jan', '09 Jan', '10 Jan', '11 Jan', '12 Jan'],
+        categories: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
         labels: {
           style: {
             colors: theme.palette.text.secondary
@@ -113,13 +113,13 @@ function LineChart() {
     },
     series: [
       {
-        name: 'Page Views',
-        data: [3350, 1840, 2254, 5780, 9349, 5241, 2770, 2051, 3764, 2385, 5912, 8323]
+        name: 'Mensagens enviadas',
+        data: dados.monthCount
       },
       {
-        name: 'Session Duration',
-        data: [35, 41, 62, 42, 13, 18, 29, 37, 36, 51, 32, 35]
-      }
+        name: 'Total Mensagens Anual',
+        data: [dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem,dados.totalMensagem]
+      },
     ]
   };
 
@@ -127,10 +127,10 @@ function LineChart() {
     <Card>
       <CardContent>
         <Typography
-          variant="h4"
+          variant="h5"
           color="textPrimary"
         >
-          Web Traffic
+          Trafico de Mensagens
         </Typography>
         <Chart
           type="line"

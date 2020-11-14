@@ -14,8 +14,8 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import axios from 'src/utils/axios';
-import useIsMountedRef from 'src/hooks/useIsMountedRef';
+//import axios from 'src/utils/axios';
+//import useIsMountedRef from 'src/hooks/useIsMountedRef';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -50,26 +50,26 @@ const useStyles = makeStyles((theme) => ({
 
 function Subscription({ className, ...rest }) {
   const classes = useStyles();
-  const isMountedRef = useIsMountedRef();
+//  const isMountedRef = useIsMountedRef();
   const [subscription, setSubscription] = useState(null);
 
-  const getSubscription = useCallback(() => {
-    axios
-      .get('/api/account/subscription')
-      .then((response) => {
-        if (isMountedRef.current) {
-          setSubscription(response.data.subscription);
-        }
-      });
-  }, [isMountedRef]);
+  //const getSubscription = useCallback(() => {
+ //   axios
+  //    .get('/api/account/subscription')
+   //   .then((response) => {
+   //     if (isMountedRef.current) {
+  //        setSubscription(response.data.subscription);
+  //      }
+ //     });
+ // }, [isMountedRef]);
 
-  useEffect(() => {
-    getSubscription();
-  }, [getSubscription]);
+  //useEffect(() => {
+    //getSubscription();
+  //}, [getSubscription]);
 
-  if (!subscription) {
+  //if (!subscription) {
     return null;
-  }
+  //}
 
   return (
     <Card

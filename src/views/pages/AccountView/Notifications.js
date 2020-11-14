@@ -14,7 +14,7 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import wait from 'src/utils/wait';
+//import wait from 'src/utils/wait';
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -26,7 +26,7 @@ function Notifications({ className, ...rest }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Make API request
-    await wait(500);
+    //await wait(500);
   };
 
   return (

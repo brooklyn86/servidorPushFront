@@ -14,6 +14,7 @@ import {
   Link,
   makeStyles
 } from '@material-ui/core';
+import {registerUser} from "../../../actions/accountActions";
 // import { register } from 'src/actions/accountActions';
 
 const useStyles = makeStyles(() => ({
@@ -22,37 +23,36 @@ const useStyles = makeStyles(() => ({
 
 function RegisterForm({ className, onSubmitSuccess, ...rest }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   return (
     <Formik
       initialValues={{
-        firstName: '',
-        lastName: '',
+        name: '',
         email: '',
         password: '',
+        c_password :'',
         policy: false
       }}
       validationSchema={Yup.object().shape({
-        firstName: Yup.string().max(255).required('First name is required'),
-        lastName: Yup.string().max(255).required('Last name is required'),
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-        password: Yup.string().min(7).max(255).required('Password is required'),
-        policy: Yup.boolean().oneOf([true], 'This field must be checked')
+        name: Yup.string().max(255).required('Nome é obrigatorio'),
+        c_password: Yup.string().max(255).required('Confirmação de senha é obrigatorio'),
+        email: Yup.string().email('Informe um e-mail valido').max(255).required('E -mail  é obrigatorio'),
+        password: Yup.string().min(7).max(255).required('A senha é obrigatorio'),
+        policy: Yup.boolean().oneOf([true], 'O Termo  é obrigatorio')
       })}
       onSubmit={async (values, {
         setErrors,
         setStatus,
         setSubmitting
       }) => {
-        // try {
-        //   await dispatch(register(values));
-        //   onSubmitSuccess();
-        // } catch (error) {
-        //   setStatus({ success: false });
-        //   setErrors({ submit: error.message });
-        //   setSubmitting(false);
-        // }
+         try {
+          const response = await registerUser(values);
+          onSubmitSuccess();
+         } catch (error) {
+           setStatus({ success: false });
+           setErrors({ submit: error.message });
+           setSubmitting(false);
+         }
       }}
     >
       {({
@@ -70,36 +70,23 @@ function RegisterForm({ className, onSubmitSuccess, ...rest }) {
           {...rest}
         >
           <TextField
-            error={Boolean(touched.firstName && errors.firstName)}
+            error={Boolean(touched.name && errors.name)}
             fullWidth
-            helperText={touched.firstName && errors.firstName}
-            label="First Name"
+            helperText={touched.name && errors.name}
+            label="Nome"
             margin="normal"
-            name="firstName"
+            name="name"
             onBlur={handleBlur}
             onChange={handleChange}
             type="firstName"
-            value={values.firstName}
-            variant="outlined"
-          />
-          <TextField
-            error={Boolean(touched.lastName && errors.lastName)}
-            fullWidth
-            helperText={touched.lastName && errors.lastName}
-            label="Last Name"
-            margin="normal"
-            name="lastName"
-            onBlur={handleBlur}
-            onChange={handleChange}
-            type="lastName"
-            value={values.lastName}
+            value={values.name}
             variant="outlined"
           />
           <TextField
             error={Boolean(touched.email && errors.email)}
             fullWidth
             helperText={touched.email && errors.email}
-            label="Email Address"
+            label="E-mail"
             margin="normal"
             name="email"
             onBlur={handleBlur}
@@ -112,7 +99,7 @@ function RegisterForm({ className, onSubmitSuccess, ...rest }) {
             error={Boolean(touched.password && errors.password)}
             fullWidth
             helperText={touched.password && errors.password}
-            label="Password"
+            label="Senha"
             margin="normal"
             name="password"
             onBlur={handleBlur}
@@ -121,6 +108,19 @@ function RegisterForm({ className, onSubmitSuccess, ...rest }) {
             value={values.password}
             variant="outlined"
           />
+          <TextField
+                error={Boolean(touched.c_password && errors.c_password)}
+                fullWidth
+                helperText={touched.c_password && errors.c_password}
+                label="Confirmar Senha"
+                margin="normal"
+                name="c_password"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                type="password"
+                value={values.c_password}
+                variant="outlined"
+            />
           <Box
             alignItems="center"
             display="flex"
@@ -161,7 +161,7 @@ function RegisterForm({ className, onSubmitSuccess, ...rest }) {
               type="submit"
               variant="contained"
             >
-              Create account
+              Cadastrar
             </Button>
           </Box>
         </form>

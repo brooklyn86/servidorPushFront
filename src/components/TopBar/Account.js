@@ -31,11 +31,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Account() {
   const classes = useStyles();
-  const history = useHistory();
   const ref = useRef(null);
-  // const dispatch = useDispatch();
-  // const account = useSelector((state) => state.account);
-  // const { enqueueSnackbar } = useSnackbar();
+
   const [isOpen, setOpen] = useState(false);
 
   const handleOpen = () => {

@@ -1,21 +1,3 @@
-// import React from 'react';
-// import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
-// import Login from './pages/Login';
-// import Home from './components';
-
-
-// export default function Routes() {
-//   return (
-//     <BrowserRouter>
-//       <Switch>
-//         <Route path="/home" exact component={Home} />
-//         <Route path="/login" exact component={Login} />
-//       </Switch>
-//     </BrowserRouter>
-//   );
-// }
-/* eslint-disable react/no-array-index-key */
 import React, {
   lazy,
   Suspense,
@@ -30,12 +12,13 @@ import {
 import DashboardLayout from './layouts/DashboardLayout';
 import LoadingScreen from './components/LoadingScreen';
 // import AuthGuard from 'src/components/Guard/AuthGuard';
-
+import AuthGuard from './components/Guard/AuthGuard';
+import GuestGuard from './components/Guard/GuestGuard';
 const routesConfig = [
   {
     exact: true,
     path: '/',
-    component: () => <Redirect to="/home" />
+    component: () => <Redirect to="/app" />
   },
   {
     exact: true,
@@ -44,9 +27,8 @@ const routesConfig = [
   },
   {
     exact: true,
-    // guard: GuestGuard,
+    guard: GuestGuard,
     path: '/login',
-    // component: lazy(() => import('./views/auth/LoginView'))
     component: lazy(() => import('./views/auth/LoginView'))
   },
   {
@@ -56,7 +38,7 @@ const routesConfig = [
   },
   {
     exact: true,
-    // guard: GuestGuard,
+    guard: GuestGuard,
     path: '/register',
     component: lazy(() => import('./views/auth/RegisterView'))
   },
@@ -67,7 +49,7 @@ const routesConfig = [
   },
   {
     path: '/app',
-    // guard: AuthGuard,
+    guard: AuthGuard,
     layout: DashboardLayout,
     routes: [
       {
@@ -80,6 +62,31 @@ const routesConfig = [
         exact: true,
         path: '/app/reports/dashboard',
         component: lazy(() => import('./views/reports/DashboardView'))
+      },
+      {
+        exact: true,
+        path: '/app/keys',
+        component: lazy(() => import('./views/lists'))
+      },
+      {
+        exact: true,
+        path: '/app/users',
+        component: lazy(() => import('./views/listUsers'))
+      },
+      {
+        exact: true,
+        path: '/app/key/:key',
+        component: lazy(() => import('./views/extra/forms/FormikView'))
+      },
+      {
+        exact: true,
+        path: '/app/account',
+        component: lazy(() => import('./views/pages/AccountView'))
+      },
+      {
+        exact: true,
+        path: '/app/create/user',
+        component: lazy(() => import('./views/createUser'))
       },
       {
         component: () => <Redirect to="/404" />

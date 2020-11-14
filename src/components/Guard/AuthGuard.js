@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 function AuthGuard({ children }) {
   const account = localStorage.getItem('token');
 
-  if (!account.user) {
+  if (!account) {
     return <Redirect to="/login" />;
   }
   return children;

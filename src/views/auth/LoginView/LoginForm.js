@@ -19,17 +19,16 @@ const useStyles = makeStyles(() => ({
 
 function LoginForm({ className, onSubmitSuccess, ...rest }) {
   const classes = useStyles();
-  // const dispatch = useDispatch();
 
   return (
     <Formik
       initialValues={{
-        email: 'admin@devias.io',
-        password: 'admin'
+        email: '',
+        password: ''
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-        password: Yup.string().max(255).required('Password is required')
+        email: Yup.string().email('Must be a valid email').max(255).required('O E-mail é obrigatório'),
+        password: Yup.string().max(255).required('A senha é obrigatório')
       })}
       onSubmit={async (values, {
         setErrors,
@@ -37,10 +36,10 @@ function LoginForm({ className, onSubmitSuccess, ...rest }) {
         setSubmitting
       }) => {
         try {
-          await login(values.email, values.password);
+          const response = await login(values.email, values.password);
           onSubmitSuccess();
         } catch (error) {
-          const message = (error.response && error.response.data.message) || 'Something went wrong';
+          const message = (error.response && error.response.data.message) || 'E-mail ou senha invalidos';
 
           setStatus({ success: false });
           setErrors({ submit: message });
@@ -68,7 +67,7 @@ function LoginForm({ className, onSubmitSuccess, ...rest }) {
             fullWidth
             autoFocus
             helperText={touched.email && errors.email}
-            label="Email Address"
+            label="E-mail"
             margin="normal"
             name="email"
             onBlur={handleBlur}
@@ -81,7 +80,7 @@ function LoginForm({ className, onSubmitSuccess, ...rest }) {
             error={Boolean(touched.password && errors.password)}
             fullWidth
             helperText={touched.password && errors.password}
-            label="Password"
+            label="Senha"
             margin="normal"
             name="password"
             onBlur={handleBlur}
@@ -99,7 +98,7 @@ function LoginForm({ className, onSubmitSuccess, ...rest }) {
               type="submit"
               variant="contained"
             >
-              Log In
+              Acessar
             </Button>
             {errors.submit && (
               <Box mt={3}>

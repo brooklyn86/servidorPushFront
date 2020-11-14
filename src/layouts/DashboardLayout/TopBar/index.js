@@ -57,7 +57,7 @@ function TopBar({
         </Hidden>
         <Hidden mdDown>
           <RouterLink to="/">
-            LOGO
+            <img src="https://cdn.worldvectorlogo.com/logos/socket-io.svg" width='25' height='25'/>
           </RouterLink>
         </Hidden>
         <Box

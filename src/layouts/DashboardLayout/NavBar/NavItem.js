@@ -137,6 +137,7 @@ function NavItem({
       key={title}
       {...rest}
     >
+      {console.log(href)}
       <Button
         activeClassName={classes.active}
         className={clsx(classes.buttonLeaf, `depth-${depth}`)}

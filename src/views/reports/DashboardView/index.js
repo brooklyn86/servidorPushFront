@@ -14,6 +14,71 @@ import CardContent from '@material-ui/core/CardContent';
 import {getUserData} from "../../../actions/accountActions";
 import 'moment/locale/pt-br';
 import Skeleton from '@material-ui/lab/Skeleton';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import {createDevice} from "../../../actions/devicesActions";
+import AlertMessage from '../../../components/Alert';
+import { Link, useHistory } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+const scriptExample =
+    '<script src="https://code.jquery.com/jquery-1.11.1.js"></script>\n' +
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>\n' +
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>\n' +
+    '\n' +
+    '<script>\n' +
+    '    $(function async () {\n' +
+    '    if (Notification.permission !== \'denied\') {\n' +
+    '        // Pede ao usuário para utilizar a Notificação Desktop\n' +
+    '        getPermission();\n' +
+    '    }\n' +
+    '    wsNotification.on(\'new\', () => {\n' +
+    '    if (Notification.permission === \'granted\') {\n' +
+    '        var socket  = io(\'http://localhost:8888?key=3bc3af7ac05ff884eeefd1b980858a5b&secret=a07fb80725666f93fc462c9f85888895\');\n' +
+    '        // Registra usuário no Socket\n' +
+    '        socket.on(\'welcome\', function(data){\n' +
+    '            me = data.id;\n' +
+    '        });\n' +
+    '\n' +
+    '        socket.on(\'like\', function(response){\n' +
+    '            const notification = new Notification(\'Título\', {\n' +
+    '                body: \'Conteúdo da notificação\'\n' +
+    '            });\n' +
+    '            $.toast({\n' +
+    '                heading: \'Notificação de LIKE\',\n' +
+    '                text: response.message,\n' +
+    '                loader: true,\n' +
+    '                hideAfter: 15000,\n' +
+    '                loaderBg: \'#000000\',\n' +
+    '                bgColor: \'#385bdc\',\n' +
+    '                textColor: \'white\'\n' +
+    '            });\n' +
+    '        });\n' +
+    '        \n' +
+    '        \n' +
+    '        notification.onclick = (e) => {\n' +
+    '        e.preventDefault();\n' +
+    '        window.focus();\n' +
+    '        notification.close();\n' +
+    '        }\n' +
+    '    }\n' +
+    '    });\n' +
+    '    \n' +
+    '\n' +
+    '    // notification.js\n' +
+    '\n' +
+    '        \n' +
+    '    });\n' +
+    '\n' +
+    '    async function getPermission(){\n' +
+    '        await Notification.requestPermission();\n' +
+    '\n' +
+    '    }\n'
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -49,8 +114,10 @@ function DashboardView() {
   const classes = useStyles();
   const [user, setUser] = useState([]);
   useEffect(async () => {
+
     const response = await getUserData();
     setUser(response.user)
+
   },[]);
   return (
     <Page
@@ -75,14 +142,17 @@ function DashboardView() {
 
             {
               user && user.devices  ?
-                  user.devices.map((item) =>
-                      <CardData dados={item}/>
-                  )
+                  user.devices.length > 0 ?
+                    user.devices.map((item, key) =>
+                    key < 4 &&
+                      <CardData key={key} dados={item}/>
+                    )
+                      : <CardDataLoading message={"Você não tem nenhum APP criado!"}/>
                 :
                   <>
-                    <CardDataLoading/>
-                    <CardDataLoading/>
-                    <CardDataLoading/>
+                    <CardDataLoading message={null}/>
+                    <CardDataLoading message={null}/>
+                    <CardDataLoading message={null}/>
                   </>
             }
           </Grid>
@@ -154,6 +224,9 @@ function CardData(item) {
             <b>Informações de Acesso</b>
           </Typography>
           <Typography className={classes.title} color="textSecondary" gutterBottom>
+            <b>Nome do APP:</b> {item.dados.name}
+          </Typography>
+          <Typography className={classes.title} color="textSecondary" gutterBottom>
             <b>KEY:</b> {item.dados.key}
           </Typography>
           <Typography className={classes.title} color="textSecondary" gutterBottom>
@@ -162,29 +235,118 @@ function CardData(item) {
         </CardContent>
         <CardActions>
           <Button size="small">Criado cerca de {moment(item.dados.created_at).locale('pt-br').fromNow()}</Button>
-          <Button size="small" color="primary">Enviar Notificação</Button>
+          <Link to={`/app/key/${item.dados.key}`}><Button size="small" color="primary">Enviar Notificação</Button></Link>
         </CardActions>
       </Card>
   );
 }
-function CardDataLoading() {
+
+function ResponsiveDialog() {
+  const [open, setOpen] = React.useState(false);
+  const [name, setName ] = React.useState('');
+  const [alertMessage, setAlertMessage ] = React.useState(false);
+  const [message, setMessage ] = React.useState('');
+  const [alertType, setAlertType ] = React.useState('error');
+  const [openAlert, setOpenAlert ] = React.useState(false);
+
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  async function handleCreateApp() {
+    if(name !== ''){
+         const response = await createDevice(name);
+      setName('');
+      setOpen(false);
+      setMessage(response.message);
+      setAlertMessage(true);
+      if(response.error){
+        setAlertType('success')
+      }else{
+        setAlertType('error')
+
+      }
+
+    }else{
+      alert('Por favor preencha o campo de nome do APP')
+    }
+  }
+
+  return (
+      <div>
+        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+          Criar Novo APP
+        </Button>
+        {alertMessage && <AlertMessage open={true} message={message} type={alertType} /> }
+        <Dialog
+            fullScreen={fullScreen}
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle color="textSecondary">
+            Deseja criar um novo APP?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Para criar um novo APP basta dá um nome a ele o resto é com a gente!
+            </DialogContentText>
+            <DialogContentText>
+              <TextField id="outlined-basic" label="Nome do APP" style={{width:"100%"}} value={name} onChange={(e) => setName(e.target.value)} variant="outlined" />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose} color="primary">
+              Cancelar
+            </Button>
+            <Button onClick={handleCreateApp} color="primary" autoFocus>
+              Criar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+  );
+}
+function CardDataLoading({message}) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
   return (
       <Card className={classes.rootCard} variant="outlined">
-        <CardContent>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
-            <Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} />
-          </Typography>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
-            <Skeleton animation="wave" height={10} width="70%" style={{ marginBottom: 6 }} />
-          </Typography>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
-            <Skeleton animation="wave" height={10} width="70%" style={{ marginBottom: 6 }} />
-          </Typography>
-        </CardContent>
+        {!message ?
+            (<>
+          <CardContent>
+            <Typography className={classes.title} color="textSecondary" gutterBottom>
+              <Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} />
+            </Typography>
+            <Typography className={classes.title} color="textSecondary" gutterBottom>
+              <Skeleton animation="wave" height={10} width="70%" style={{ marginBottom: 6 }} />
+            </Typography>
+            <Typography className={classes.title} color="textSecondary" gutterBottom>
+              <Skeleton animation="wave" height={10} width="70%" style={{ marginBottom: 6 }} />
+            </Typography>
+          </CardContent>
+        </>)
+            :
+            <CardContent>
+              <Typography className={classes.title} color="textSecondary" gutterBottom>
+                {message}
+              </Typography>
+            </CardContent>
+
+        }
+
         <CardActions>
-          <Skeleton animation="wave" height={10} width="60%" style={{ marginBottom: 6 }} />
+          { !message ?
+              <Skeleton animation="wave" height={10} width="60%" style={{ marginBottom: 6 }} /> :
+              <ResponsiveDialog />}
         </CardActions>
       </Card>
   );
@@ -205,9 +367,9 @@ function CardTutorial() {
             os parametros informados para nossa api serão sua <b>key</b> e sua <b>secret</b>
           </Typography>
 
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
-          Exemplo:
-          </Typography>
+
+          <pre> {scriptExample} </pre >
+
         </CardContent>
         <CardActions>
 

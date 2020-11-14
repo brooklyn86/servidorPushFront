@@ -1,6 +1,5 @@
 import CryptoJS from 'crypto-js';
 const DADOS_CRIPTOGRAFAR = {
-    segredo : "Secret Passphrase",
     key : '986431hash'
 };
   

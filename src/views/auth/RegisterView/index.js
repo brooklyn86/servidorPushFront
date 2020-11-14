@@ -34,13 +34,13 @@ function RegisterView() {
   const history = useHistory();
 
   const handleSubmitSuccess = () => {
-    history.push('/app/login');
+    history.push('/');
   };
 
   return (
     <Page
       className={classes.root}
-      title="Register"
+      title="Cadastro"
     >
       <Container maxWidth="sm">
         <Box
@@ -57,7 +57,7 @@ function RegisterView() {
             to="/"
             className={classes.backButton}
           >
-            Back to home
+            Voltar ao Login
           </Button>
         </Box>
         <Card>
@@ -67,10 +67,10 @@ function RegisterView() {
               variant="h2"
               color="textPrimary"
             >
-              Sign up
+              Cadastro
             </Typography>
             <Typography variant="subtitle1">
-              Sign up on the internal platform
+              Cadastre-se na plataforma utilizando seu endereço de e-mail
             </Typography>
             <Box mt={3}>
               <RegisterForm onSubmitSuccess={handleSubmitSuccess} />
@@ -84,7 +84,7 @@ function RegisterView() {
               variant="body2"
               color="textSecondary"
             >
-              Have an account?
+              Já tenho um conta?
             </Link>
           </CardContent>
         </Card>
