@@ -26,59 +26,24 @@ import {createDevice} from "../../../actions/devicesActions";
 import AlertMessage from '../../../components/Alert';
 import { Link, useHistory } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-const scriptExample =
-    '<script src="https://code.jquery.com/jquery-1.11.1.js"></script>\n' +
-    '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>\n' +
-    '<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>\n' +
-    '\n' +
-    '<script>\n' +
-    '    $(function async () {\n' +
-    '    if (Notification.permission !== \'denied\') {\n' +
-    '        // Pede ao usuário para utilizar a Notificação Desktop\n' +
-    '        getPermission();\n' +
-    '    }\n' +
-    '    wsNotification.on(\'new\', () => {\n' +
-    '    if (Notification.permission === \'granted\') {\n' +
-    '        var socket  = io(\'http://localhost:8888?key=3bc3af7ac05ff884eeefd1b980858a5b&secret=a07fb80725666f93fc462c9f85888895\');\n' +
-    '        // Registra usuário no Socket\n' +
-    '        socket.on(\'welcome\', function(data){\n' +
-    '            me = data.id;\n' +
-    '        });\n' +
-    '\n' +
-    '        socket.on(\'like\', function(response){\n' +
-    '            const notification = new Notification(\'Título\', {\n' +
-    '                body: \'Conteúdo da notificação\'\n' +
-    '            });\n' +
-    '            $.toast({\n' +
-    '                heading: \'Notificação de LIKE\',\n' +
-    '                text: response.message,\n' +
-    '                loader: true,\n' +
-    '                hideAfter: 15000,\n' +
-    '                loaderBg: \'#000000\',\n' +
-    '                bgColor: \'#385bdc\',\n' +
-    '                textColor: \'white\'\n' +
-    '            });\n' +
-    '        });\n' +
-    '        \n' +
-    '        \n' +
-    '        notification.onclick = (e) => {\n' +
-    '        e.preventDefault();\n' +
-    '        window.focus();\n' +
-    '        notification.close();\n' +
-    '        }\n' +
-    '    }\n' +
-    '    });\n' +
-    '    \n' +
-    '\n' +
-    '    // notification.js\n' +
-    '\n' +
-    '        \n' +
-    '    });\n' +
-    '\n' +
-    '    async function getPermission(){\n' +
-    '        await Notification.requestPermission();\n' +
-    '\n' +
-    '    }\n'
+const scriptExample ='\n<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>\n'+
+    '<script src="https://code.jquery.com/jquery-1.11.1.js"></script>\n'+
+    '<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>\n'+
+    '\n'+
+    '<script>\n'+
+      '   var key = "3bc3af7ac05ff884eeefd1b980858a5b";\n'+
+      '   var secret = "a07fb80725666f93fc462c9f85888895";\n'+
+      'if ("serviceWorker" in navigator) {\n'+
+      '  navigator.serviceWorker.register("./firebase-messaging-sw.js")\n'+
+      '    .then(function(registration) {\n'+
+      '      console.log("Registration successful, scope is:", registration.scope);\n'+
+      '    }).catch(function(err) {\n'+
+      '     console.log("Service worker registration failed, error:", err);\n'+
+      '    });\n'+
+      '}\n'+
+      '</script>\n'+
+    '<script src="http://localhost:3000/service-push-notification.js"></script>\n';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,

@@ -30,6 +30,10 @@ function BasicForm() {
   const [device, setDevice] = useState({});
   const [value, setValue] = useState('');
   const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [link, setLink] = useState('');
+  const [image, setImage] = useState('');
   const [type, setType] = useState('');
   const [dados, setDados] = useState([]);
   const [params, setParams] = useState([]);
@@ -57,19 +61,21 @@ function BasicForm() {
         params.push(newParams);
         setParams(params);
         setName('')
-        setValue('')
         setType('Texto')
 
     }
 
    async function handleSendNotification(){
+      let newParams = {'base' : {title:title,body:body,link:link,image:image}};
+      params.push(newParams);
+      setParams(params)
       const  response = await sendNotification(params);
       if(response){
-          window.location.reload();
+        //   window.location.reload();
       }
     }
 
- async function  sendFileUpload(value){
+ async function sendFileUpload(value){
         setLoading(1)
         const response = await sendFileUploadData(value);
         if(response.error){
@@ -81,6 +87,18 @@ function BasicForm() {
             setValue(response.image)
         }
  }
+ async function sendImageUpload(value){
+    setLoading(1)
+    const response = await sendFileUploadData(value);
+    if(response.error){
+        setLoading(0)
+        alert('Falha ao Realizar o Upload')
+    }else{
+        setLoading(0)
+        alert('Realizado o Upload')
+        setImage(response.image)
+    }
+}
     return (
         <Card>
           <CardHeader title={`Enviar Notificação ${device.name}`}/>
@@ -93,10 +111,39 @@ function BasicForm() {
                 >
                   <Grid
                     item
+                    md={12}
+                    xs={12}
+                  >
+                      <TextField id="outlined-basic" label="Titulo da notificação" value={title}  onChange={(e) => setTitle(e.target.value)} variant="outlined"  style={{width:'100%'}}/>
+                  </Grid>
+                  <Grid
+                    item
+                    md={12}
+                    xs={12}
+                  >
+                      <TextField id="outlined-basic" label="Corpo da Notificação" value={body}  onChange={(e) => setBody(e.target.value)} variant="outlined"  style={{width:'100%'}}/>
+                  </Grid>
+                  <Grid
+                    item
+                    md={12}
+                    xs={12}
+                  >
+                      <TextField id="outlined-basic" label="Link da notificação" value={link}  onChange={(e) => setLink(e.target.value)} variant="outlined"  style={{width:'100%'}}/>
+                  </Grid>
+                  <Grid
+                    item
+                    md={12}
+                    xs={12}
+                  >
+                    <input type="file" style={{ cursor: "pointer", backgroundColor:"#f50057", height:55, borderRadius:10, color:"white", alignItems:"center", padding:15 }} onChange={(event) => sendImageUpload(event.target.files)} />
+
+                  </Grid>
+                  <Grid
+                    item
                     md={4}
                     xs={12}
                   >
-                      <TextField id="outlined-basic" label="Nome do Parametro" value={name}  onChange={(e) => setName(e.target.value)} variant="outlined"  style={{width:'100%'}}/>
+                      <TextField id="outlined-basic" label="Novo parâmetro" value={name}  onChange={(e) => setName(e.target.value)} variant="outlined"  style={{width:'100%'}}/>
                   </Grid>
                   <Grid
                     item
